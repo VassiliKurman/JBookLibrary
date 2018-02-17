@@ -1,0 +1,20 @@
+AboutUI: add picture to the panel (books or shelf with books).
+
+Add paging for querieng databases
+
+IDCardDetailsPanel: print functionality to fix
+
+Find icon for application
+
+Delete this file from project
+
+JBasicCalendar: to rewrite
+
+Holidays: set and get list
+fix XML writer for holidays
+
+Write "Report" section in "DeskUI"
+
+Cleared fines not displayed; error, probably because fine not paid and therefore payment date not set
+
+Fine details screen: payment is too big.
