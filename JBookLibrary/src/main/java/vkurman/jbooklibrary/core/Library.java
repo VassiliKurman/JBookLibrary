@@ -19,11 +19,12 @@ package vkurman.jbooklibrary.core;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
+
+import org.h2.jdbcx.JdbcConnectionPool;
 
 import vkurman.jbooklibrary.activityregister.ActivityRegister;
 import vkurman.jbooklibrary.activityregister.RegisterObserverPanel;
@@ -47,6 +48,7 @@ public class Library {
 	private static String path = AdminPrefs.DATABASE_PATH;
 	private static String user = AdminPrefs.DATABASE_USER;
 	private static String password = AdminPrefs.DATABASE_PASSWORD;
+	private static JdbcConnectionPool cp;
 	private static Connection conn;
 	private static ServerSocket ss;
 	
@@ -151,8 +153,10 @@ public class Library {
 			Class.forName("org.h2.Driver");
 			
 			try {
-				conn = DriverManager.
-				        getConnection("jdbc:h2:" + path, user, password);
+				cp = JdbcConnectionPool.
+					    create("jdbc:h2:~/" + path, user, password);
+				conn = cp.getConnection();
+				
 				ActivityRegister.newActivity(
 						this,
 						"... database connection opened!");
@@ -176,8 +180,14 @@ public class Library {
 	private void close(){
 		ActivityRegister.newActivity(this, "Closing database connection...");
 		try {
-			conn.close();
-			ActivityRegister.newActivity(this, "... connection closed!");
+			if(conn != null) {
+				conn.close();
+				ActivityRegister.newActivity(this, "... connection closed!");
+			}
+			if(cp != null) {
+				cp.dispose();
+				ActivityRegister.newActivity(this, "... connection pool disposed!");
+			}
 		} catch (SQLException e) {
 			ActivityRegister.newActivity(this, "... cannot close connection!");
 		}
